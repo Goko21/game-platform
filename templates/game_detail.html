@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ game.name }}</title>
+</head>
+<body>
+  <a href="{{ url_for('games') }}">← Tüm Oyunlara Dön</a>
+  <h1>{{ game.name }}</h1>
+  <p><strong>Türler:</strong> {{ game.genres | join(', ') }}</p>
+  <p><strong>Toplam Oynama Süresi:</strong> {{ game.play_time }} dakika</p>
+  <p><strong>Ortalama Puan:</strong>
+    {{ '%.1f'|format(average_rating) if average_rating else 'Henüz puan yok' }}
+  </p>
+
+  <hr>
+
+  <h2>Oyna</h2>
+  <form method="POST" action="{{ url_for('play', game_name=game.name) }}">
+    <input type="number" name="play_time" placeholder="Dakika" min="1" required>
+    <button type="submit">Oyna</button>
+  </form>
+
+  <h2>Yorumlar</h2>
+  <ul>
+    {% for c in game.comments %}
+      <li>
+        <strong>{{ c.user }}:</strong> {{ c.comment }}
+      </li>
+    {% else %}
+      <li>Henüz yorum yok.</li>
+    {% endfor %}
+  </ul>
+  <h3>Yorum Yap</h3>
+  <form method="POST" action="{{ url_for('comment', game_name=game.name) }}">
+    <textarea name="comment" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
+    <button type="submit">Gönder</button>
+  </form>
+
+  <h2>Puanlar</h2>
+  <ul>
+    {% for r in game.ratings %}
+      <li><strong>{{ r.user }}:</strong> {{ r.value }}/5 ({{ r.play_time }} dk)</li>
+    {% else %}
+      <li>Henüz puan yok.</li>
+    {% endfor %}
+  </ul>
+  <h3>Puan Ver</h3>
+  <form method="POST" action="{{ url_for('rate', game_name=game.name) }}">
+    <input type="number" name="rating" min="1" max="5" required>
+    <button type="submit">Puanla</button>
+  </form>
+</body>
+</html>

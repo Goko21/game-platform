@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Kayıt Ol</title>
+</head>
+<body>
+  <h1>Kayıt Ol</h1>
+  <form method="POST" action="{{ url_for('register') }}">
+    <input type="text" name="username" placeholder="Kullanıcı Adı" required>
+    <button type="submit">Kayıt Ol</button>
+  </form>
+  <p>Zaten hesabın var mı? <a href="{{ url_for('login') }}">Giriş Yap</a></p>
+</body>
+</html>

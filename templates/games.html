@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tüm Oyunlar</title>
+</head>
+<body>
+  <h1>Tüm Oyunlar</h1>
+  <a href="{{ url_for('home') }}">Ana Sayfa</a>
+
+  <h2>Yeni Oyun Ekle</h2>
+  <form method="POST" action="{{ url_for('add_game') }}">
+    <input type="text" name="name" placeholder="Oyun Adı" required>
+    <input type="text" name="genres" placeholder="Türler (virgülle ayırın)" required>
+    <input type="text" name="photo" placeholder="Fotoğraf URL (opsiyonel)">
+    <button type="submit">Ekle</button>
+  </form>
+
+  <h2>Mevcut Oyunlar</h2>
+  <ul>
+    {% for game in games %}
+      <li>
+        <a href="{{ url_for('game_detail', game_name=game.name) }}">{{ game.name }}</a>
+        <form style="display:inline" method="POST" action="{{ url_for('remove_game', game_name=game.name) }}">
+          <button type="submit" onclick="return confirm('Silinsin mi?')">Sil</button>
+        </form>
+      </li>
+    {% else %}
+      <li>Henüz oyun eklenmemiş.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

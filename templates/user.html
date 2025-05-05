@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ user.name }} Profili</title>
+</head>
+<body>
+  <a href="{{ url_for('home') }}">← Ana Sayfa</a>
+  <h1>{{ user.name }}’in Profili</h1>
+
+  <p><strong>Toplam Oynama Süresi:</strong> {{ user.total_play_time }} dakika</p>
+  <p><strong>En Çok Oynanan Oyun:</strong> {{ most_played or 'Yok' }}</p>
+  <p><strong>Ortalama Puan:</strong>
+     {{ '%.1f'|format(avg_rating) if avg_rating else 'Yok'}}
+  </p>
+
+  <h2>Yorumları</h2>
+  <ul>
+    {% for c in user.comments %}
+      <li><strong>{{ c.game }}:</strong> {{ c.comment }}</li>
+    {% else %}
+      <li>Yorum yok.</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Puanları</h2>
+  <ul>
+    {% for r in user.ratings %}
+      <li><strong>{{ r.game }}:</strong> {{ r.value }}/5</li>
+    {% else %}
+      <li>Puan yok.</li>
+    {% endfor %}
+  </ul>
+
+  {% if session.username == user.name or is_admin %}
+    <form method="POST" action="{{ url_for('remove_user', username=user.name) }}">
+      <button type="submit" onclick="return confirm('Emin misiniz?')">Hesabı Sil</button>
+    </form>
+  {% endif %}
+</body>
+</html>

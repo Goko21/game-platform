@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Profilim</title>
+</head>
+<body>
+  <a href="{{ url_for('home') }}">← Ana Sayfa</a>
+  <h1>{{ user.name }}’in Profili</h1>
+
+  <p><strong>Toplam Oynama Süresi:</strong> {{ user.total_play_time }} dakika</p>
+  <p><strong>En Çok Oynanan Oyun:</strong> {{ most_played or 'Yok' }}</p>
+  <p><strong>Ortalama Puanım:</strong>
+     {{ '%.1f'|format(avg_rating) if avg_rating else 'Yok' }}
+  </p>
+
+  <h2>Yorumlarım</h2>
+  <ul>
+    {% for c in user.comments %}
+      <li><strong>{{ c.game }}:</strong> {{ c.comment }}</li>
+    {% else %}
+      <li>Henüz yorum yapmadınız.</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Puanlarım</h2>
+  <ul>
+    {% for r in user.ratings %}
+      <li><strong>{{ r.game }}:</strong> {{ r.value }}/5</li>
+    {% else %}
+      <li>Henüz puan vermediniz.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
