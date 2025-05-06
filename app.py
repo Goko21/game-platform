@@ -133,11 +133,27 @@ def games():
     games_with_comments = []
     for game in all_games:
         comments = game.get('comments', [])
+        
+        # Ortalama puanı hesapla (varsa)
+        if game.get('ratings'):
+            total_weight = sum(r['play_time'] for r in game['ratings'])
+            if total_weight > 0:
+                weighted = sum(r['play_time'] * r['value'] for r in game['ratings'])
+                avg = round(weighted / total_weight, 2)
+            else:
+                avg = None
+        else:
+            avg = None
+
+        # Bu alanı dict'e ekle
         games_with_comments.append({
             'game': game,
-            'comments': comments
+            'comments': comments,
+            'average_rating': avg
         })
+
     return render_template('games.html', games_with_comments=games_with_comments)
+
 
 
 @app.route('/game/<game_name>')
