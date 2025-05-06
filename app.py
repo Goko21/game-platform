@@ -49,11 +49,12 @@ def logout():
 def user_profile(username):
     if 'username' not in session:
         return redirect(url_for('login'))
+
     user = users_col.find_one({"name": username})
     if not user:
         return "Kullanıcı bulunamadı", 404
 
-    ratings = user.get('ratings', [])
+    ratings    = user.get('ratings', [])
     avg_rating = sum(r['value'] for r in ratings) / len(ratings) if ratings else None
     play_times = user.get('play_times', {})
     most_played = max(play_times, key=play_times.get) if play_times else None
@@ -101,12 +102,13 @@ def register():
 def user_home():
     if 'username' not in session:
         return redirect(url_for('login'))
+
     username = session['username']
-    user = users_col.find_one({"name": username})
+    user     = users_col.find_one({"name": username})
     if not user:
         return redirect(url_for('home'))
 
-    ratings = user.get('ratings', [])
+    ratings    = user.get('ratings', [])
     avg_rating = sum(r['value'] for r in ratings) / len(ratings) if ratings else None
     play_times = user.get('play_times', {})
     most_played = max(play_times, key=play_times.get) if play_times else None
@@ -117,6 +119,7 @@ def user_home():
         most_played=most_played,
         avg_rating=avg_rating
     )
+
 
 
 @app.route('/games')
