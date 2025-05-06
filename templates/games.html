@@ -33,21 +33,14 @@
       <li>
         <h3>{{ g.name }}</h3>
 
-        <!-- Fotoğraf -->
         {% if g.photo %}
           <img src="{{ g.photo }}" alt="{{ g.name }}" width="200"><br>
         {% endif %}
 
-        <!-- Türler -->
         <p><strong>Türler:</strong> {{ g.genres | join(', ') }}</p>
-
-        <!-- Toplam Oynama Süresi -->
         <p><strong>Play Time:</strong> {{ g.play_time }} dakika</p>
-
-        <!-- Ağırlıklı Puan -->
         <p><strong>Puan:</strong> {{ '%.2f' % g.rating }}</p>
 
-        <!-- Opsiyonel Alanlar -->
         {% if g.optional %}
           <p><strong>Ek Bilgiler:</strong></p>
           <ul>
@@ -57,21 +50,16 @@
           </ul>
         {% endif %}
 
-        <!-- Yorumlar (oynama süresine göre sıralı) -->
         <h4>Tüm Yorumlar:</h4>
         <ul>
           {% for c in item.comments %}
-            <li>
-              <strong>{{ c.user_name }}:</strong> {{ c.comment }}
-              ({{ c.play_time }} dakika)
-            </li>
+            <li><strong>{{ c.user_name }}:</strong> {{ c.comment }} ({{ c.play_time }} dakika)</li>
           {% endfor %}
           {% if item.comments|length == 0 %}
             <li><em>Henüz yorum yok.</em></li>
           {% endif %}
         </ul>
 
-        <!-- Sil & Detay -->
         <form style="display:inline" method="POST"
               action="{{ url_for('remove_game', game_name=g.name) }}"
               onsubmit="return confirm('Silinsin mi?')">

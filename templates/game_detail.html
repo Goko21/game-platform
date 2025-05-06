@@ -9,21 +9,14 @@
   <a href="{{ url_for('games_page') }}">← Tüm Oyunlara Dön</a>
   <hr>
 
-  <!-- Fotoğraf -->
   {% if game.photo %}
     <img src="{{ game.photo }}" alt="{{ game.name }}" width="300"><br>
   {% endif %}
 
-  <!-- Türler -->
   <p><strong>Türler:</strong> {{ game.genres | join(', ') }}</p>
-
-  <!-- Play Time -->
   <p><strong>Play Time:</strong> {{ game.play_time }} dakika</p>
-
-  <!-- Ağırlıklı Puan -->
   <p><strong>Puan:</strong> {{ '%.2f' % average_rating }}</p>
 
-  <!-- Opsiyonel Alanlar -->
   {% if game.optional %}
     <h4>Ek Bilgiler:</h4>
     <ul>
@@ -33,7 +26,6 @@
     </ul>
   {% endif %}
 
-  <!-- Yorumlar -->
   <h4>Yorumlar:</h4>
   <ul>
     {% for comment in game.comments %}
@@ -46,19 +38,22 @@
     {% endfor %}
   </ul>
 
-  <!-- Oynama, Puanlama, Yorumlama Formları -->
-  <h2>Bu oyunu oyna / puanla / yorumla</h2>
-  <form action="{{ url_for('play', game_name=game.name) }}" method="POST">
-    <label>Kaç dakika oynadınız? <input type="number" name="play_time" min="1" required></label>
-    <button type="submit">Oyna</button>
-  </form>
-  <form action="{{ url_for('rate', game_name=game.name) }}" method="POST">
-    <label>Puanınız (1–5): <input type="number" name="rating" min="1" max="5" required></label>
-    <button type="submit">Puanla</button>
-  </form>
-  <form action="{{ url_for('comment', game_name=game.name) }}" method="POST">
-    <label>Yorumunuz: <input type="text" name="comment" required></label>
-    <button type="submit">Yorumla</button>
-  </form>
+  {% if current_user %}
+    <h2>Bu oyunu oyna / puanla / yorumla</h2>
+    <form action="{{ url_for('play', game_name=game.name) }}" method="POST">
+      <label>Kaç dakika oynadınız? <input type="number" name="play_time" min="1" required></label>
+      <button type="submit">Oyna</button>
+    </form>
+    <form action="{{ url_for('rate', game_name=game.name) }}" method="POST">
+      <label>Puanınız (1–5): <input type="number" name="rating" min="1" max="5" required></label>
+      <button type="submit">Puanla</button>
+    </form>
+    <form action="{{ url_for('comment', game_name=game.name) }}" method="POST">
+      <label>Yorumunuz: <input type="text" name="comment" required></label>
+      <button type="submit">Yorumla</button>
+    </form>
+  {% else %}
+    <p><em>Oynamak, puanlamak veya yorum yapmak için giriş yapmalısınız.</em></p>
+  {% endif %}
 </body>
 </html>
