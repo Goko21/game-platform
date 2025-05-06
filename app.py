@@ -246,19 +246,20 @@ def comment(game_name):
 @app.route('/add_user', methods=['POST'])
 def add_user():
     username = request.form['username']
-    # check not exists
-    if users_col.find_one({'name': username}):
-        flash('User already exists.')
+
+    if users_col.find_one({"name": username}):
+        flash("Bu kullanıcı adı zaten mevcut.")
     else:
         users_col.insert_one({
-            'name': username,
-            'total_play_time': 0,
-            'play_times': {},
-            'ratings': [],
-            'comments': []
+            "name": username,
+            "played_games": [],
+            "ratings": [],
+            "comments": []
         })
-        flash(f"User '{username}' added.")
+        flash(f"{username} başarıyla eklendi.")
+
     return redirect(url_for('home'))
+
 
 
 
