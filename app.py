@@ -131,28 +131,30 @@ def user_home():
 def games():
     all_games = games_col.find().sort("name", 1)
     games_with_comments = []
+
     for game in all_games:
         comments = game.get('comments', [])
-        
-        # Ortalama puanı hesapla (varsa)
-        if game.get('ratings'):
-            total_weight = sum(r['play_time'] for r in game['ratings'])
-            if total_weight > 0:
-                weighted = sum(r['play_time'] * r['value'] for r in game['ratings'])
-                avg = round(weighted / total_weight, 2)
-            else:
-                avg = None
-        else:
-            avg = None
 
-       
+        # Ortalama puanı hesapla
+        ratings = game.get('ratings', [])
+        if ratings:
+            total_weight = sum(r['play_time'] for r in ratings)
+            if total_weight > 0:
+                weighted = sum(r['play_time'] * r['value'] for r in ratings)
+                average_rating = round(weighted / total_weight, 2)
+            else:
+                average_rating = None
+        else:
+            average_rating = None
+
         games_with_comments.append({
             'game': game,
             'comments': comments,
-            'average_rating': avg
+            'average_rating': average_rating
         })
 
     return render_template('games.html', games_with_comments=games_with_comments)
+
 
 
 
