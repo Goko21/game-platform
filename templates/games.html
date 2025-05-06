@@ -12,19 +12,6 @@
   </nav>
   <hr>
 
-  <!-- Yeni Oyun Ekle -->
-  <h2>Yeni Oyun Ekle</h2>
-  <form method="POST" action="{{ url_for('add_game') }}">
-    <input type="text" name="name" placeholder="Oyun Adı" required><br>
-    <input type="text" name="genres" placeholder="Türler (virgülle ayırın)" required><br>
-    <input type="text" name="photo" placeholder="Fotoğraf URL"><br>
-    <input type="text" name="optional1" placeholder="Opsiyonel Alan 1"><br>
-    <input type="text" name="optional2" placeholder="Opsiyonel Alan 2"><br>
-    <button type="submit">Ekle</button>
-  </form>
-
-  <hr>
-
   <!-- Oyun Listesi -->
   <h2>Mevcut Oyunlar</h2>
   <ul>
