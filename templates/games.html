@@ -26,12 +26,12 @@
 
         <p><strong>Türler:</strong> {{ g.genres | join(', ') }}</p>
         <p><strong>Play Time:</strong> {{ g.play_time }} dakika</p>
-        <p><strong>Puan:</strong> {{ '%.2f' % g.rating }}</p>
+        <p><strong>Puan:</strong> {{ item.average_rating | default("Henüz oy yok") }}</p>
 
-        {% if g.optional %}
+        {% if g.optional_fields %}
           <p><strong>Ek Bilgiler:</strong></p>
           <ul>
-            {% for key, val in g.optional.items() %}
+            {% for key, val in g.optional_fields.items() %}
               <li><strong>{{ key }}:</strong> {{ val }}</li>
             {% endfor %}
           </ul>
@@ -40,7 +40,7 @@
         <h4>Tüm Yorumlar:</h4>
         <ul>
           {% for c in item.comments %}
-            <li><strong>{{ c.user_name }}:</strong> {{ c.comment }} ({{ c.play_time }} dakika)</li>
+            <li><strong>{{ c.user }}:</strong> {{ c.comment }} ({{ c.play_time }} dakika)</li>
           {% endfor %}
           {% if item.comments|length == 0 %}
             <li><em>Henüz yorum yok.</em></li>
