@@ -145,7 +145,7 @@ def games():
         else:
             avg = None
 
-        # Bu alanı dict'e ekle
+       
         games_with_comments.append({
             'game': game,
             'comments': comments,
