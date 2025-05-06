@@ -243,6 +243,25 @@ def comment(game_name):
     return redirect(url_for('game_detail', game_name=game_name))
 
 
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    username = request.form['username']
+    # check not exists
+    if users_col.find_one({'name': username}):
+        flash('User already exists.')
+    else:
+        users_col.insert_one({
+            'name': username,
+            'total_play_time': 0,
+            'play_times': {},
+            'ratings': [],
+            'comments': []
+        })
+        flash(f"User '{username}' added.")
+    return redirect(url_for('home'))
+
+
+
 @app.route('/add_game', methods=['POST'])
 def add_game():
     if 'username' not in session:
