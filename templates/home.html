@@ -1,84 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Home</title>
+    <meta charset="UTF-8">
+    <title>Ana Sayfa</title>
 </head>
 <body>
-  <h1>Home Page</h1>
+    <h1>Oyun Platformu</h1>
 
-  <!-- Navigation -->
-  <nav>
-    <a href="/">🏠 Home</a> |
-    <a href="/games">🎮 Games Page</a> |
-    {% if session.get('username') %}
-      <a href="/user_home">👤 Your User Page</a>
+    {% if message %}
+        <p style="color: green; font-weight: bold;">{{ message }}</p>
     {% endif %}
-  </nav>
-  <hr>
 
-  
-  <!-- Flash (session message) -->
-{% if session.get('message') %}
-<p><strong>{{ session.get('message') }}</strong></p>
-{% set _ = session.pop('message') %}
-{% endif %}
+    <h2>Oyunlar</h2>
+    <ul>
+        {% for game in games %}
+            <li>
+                <a href="{{ url_for('game_detail', game_name=game.name) }}">{{ game.name }}</a>
+                {% if game.rating_enabled %}
+                    <form action="{{ url_for('disable_game', game_name=game.name) }}" method="post" style="display:inline;">
+                        <button type="submit">Puanlama Kapat</button>
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('enable_game', game_name=game.name) }}" method="post" style="display:inline;">
+                        <button type="submit">Puanlama Aç</button>
+                    </form>
+                {% endif %}
+                <form action="{{ url_for('remove_game', game_name=game.name) }}" method="post" style="display:inline;">
+                    <button type="submit">Sil</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
 
+    <h3>Yeni Oyun Ekle</h3>
+    <form action="{{ url_for('add_game') }}" method="post">
+        <input type="text" name="name" placeholder="Oyun Adı" required>
+        <input type="text" name="genres" placeholder="Türler (virgülle ayır)" required>
+        <input type="text" name="photo" placeholder="Fotoğraf URL (opsiyonel)">
+        <button type="submit">Ekle</button>
+    </form>
 
-  <!-- Add User -->
-  <h2>Add User</h2>
-  <form action="/add_user" method="POST">
-    <input type="text" name="username" placeholder="Enter user name" required>
-    <button type="submit">Add User</button>
-  </form>
+    <h2>Kullanıcılar</h2>
+    <ul>
+        {% for user in users %}
+            <li>
+                <a href="{{ url_for('user_profile', username=user.name) }}">{{ user.name }}</a>
+                <a href="{{ url_for('login_user', username=user.name) }}">→ Giriş Yap</a>
+                <form action="{{ url_for('remove_user', username=user.name) }}" method="post" style="display:inline;">
+                    <button type="submit">Sil</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
 
-  <!-- Add Game -->
-  <h2>Add Game</h2>
-  <form action="/add_game" method="POST">
-    <input type="text" name="name" placeholder="Game name" required><br>
-    <input type="text" name="genres" placeholder="Genres (comma separated)" required><br>
-    <input type="text" name="photo" placeholder="Image URL" required><br>
-    <input type="text" name="optional1" placeholder="Optional field 1"><br>
-    <input type="text" name="optional2" placeholder="Optional field 2"><br>
-    <button type="submit">Add Game</button>
-  </form>
+    <h3>Yeni Kullanıcı Ekle</h3>
+    <form action="{{ url_for('add_user') }}" method="post">
+        <input type="text" name="username" placeholder="Kullanıcı Adı" required>
+        <button type="submit">Ekle</button>
+    </form>
 
-  <!-- List Users -->
-  <h2>Users</h2>
-  <ul>
-    {% for user in users %}
-      <li>
-        {{ user.name }}
-        <form action="/remove_user/{{ user.name }}" method="POST" style="display:inline;">
-          <button type="submit">Remove User</button>
-        </form>
-        <form action="/login_user/{{ user.name }}" method="GET" style="display:inline;">
-          <button type="submit">Login as {{ user.name }}</button>
-        </form>
-      </li>
-    {% endfor %}
-  </ul>
-
-  <!-- List Games -->
-  <h2>Games</h2>
-  <ul>
-    {% for game in games %}
-      <li>
-        {{ game.name }}
-        <form action="/remove_game/{{ game.name }}" method="POST" style="display:inline;">
-          <button type="submit">Remove Game</button>
-        </form>
-        {% if game.rating_enabled %}
-          <form action="/disable_game/{{ game.name }}" method="POST" style="display:inline;">
-            <button type="submit">Disable Rating/Comment</button>
-          </form>
-        {% else %}
-          <form action="/enable_game/{{ game.name }}" method="POST" style="display:inline;">
-            <button type="submit">Enable Rating/Comment</button>
-          </form>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
+    <p><a href="{{ url_for('logout') }}">Çıkış Yap</a></p>
 </body>
 </html>
