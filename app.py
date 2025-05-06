@@ -106,14 +106,7 @@ def enable_game(game_name):
 def login_user(username):
     session['username'] = username
     session['message'] = f"{username} olarak giriş yapıldı."
-    return redirect(url_for('user_home'))
-
-
-@app.route("/login/<username>")
-def login_user(username):
-    session['current_user'] = username
-    session['message'] = f"{username} olarak giriş yapıldı."
-    return redirect(url_for("home"))
+    return redirect(url_for('home'))
 
 
 @app.route('/user_home')
