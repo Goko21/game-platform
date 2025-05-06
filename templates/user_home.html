@@ -1,35 +1,76 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Profilim</title>
+  <title>{{ user.name }}'s Page</title>
 </head>
 <body>
-  <a href="{{ url_for('home') }}">← Ana Sayfa</a>
-  <h1>{{ user.name }}’in Profili</h1>
+  <!-- Navigation -->
+  <nav>
+    <a href="/">🏠 Home</a> |
+    <a href="/games">🎮 Games Page</a> |
+    <a href="/user_home">👤 Your Page</a>
+  </nav>
+  <hr>
 
-  <p><strong>Toplam Oynama Süresi:</strong> {{ user.total_play_time }} dakika</p>
-  <p><strong>En Çok Oynanan Oyun:</strong> {{ most_played or 'Yok' }}</p>
-  <p><strong>Ortalama Puanım:</strong>
-     {{ '%.1f'|format(avg_rating) if avg_rating else 'Yok' }}
+  <!-- User Info -->
+  <h1>{{ user.name }}'s Dashboard</h1>
+  <p><strong>Total Play Time:</strong> {{ user.total_play_time }} minutes</p>
+  <p><strong>Average of Ratings:</strong> {{ '%.2f' % user.average_rating }}</p>
+  <p><strong>Most Played Game:</strong>
+    {% for g in games %}
+      {% if g._id|string == user.most_played_game %}
+        {{ g.name }}
+      {% endif %}
+    {% endfor %}
   </p>
 
-  <h2>Yorumlarım</h2>
+  <!-- Comments -->
+  <h2>Your Comments (sorted by your play time)</h2>
   <ul>
-    {% for c in user.comments %}
-      <li><strong>{{ c.game }}:</strong> {{ c.comment }}</li>
-    {% else %}
-      <li>Henüz yorum yapmadınız.</li>
+    {% for game_id, comment, play_time in sorted_comments %}
+      <li>
+        {% for g in games %}
+          {% if g._id|string == game_id %}
+            <strong>{{ g.name }}:</strong> {{ comment }} ({{ play_time }} min)
+          {% endif %}
+        {% endfor %}
+      </li>
+    {% endfor %}
+    {% if sorted_comments|length == 0 %}
+      <li><em>No comments yet. Play and comment on games!</em></li>
+    {% endif %}
+  </ul>
+
+  <!-- Actions -->
+  <h2>Actions</h2>
+  <ul>
+    {% for g in games %}
+      <li>
+        <strong>{{ g.name }}</strong><br>
+
+        <!-- Play Game -->
+        <form action="/play/{{ g._id }}" method="POST" style="display:inline;">
+          <input type="number" name="minutes" min="1" required placeholder="Minutes">
+          <button type="submit">Play</button>
+        </form>
+
+        <!-- Rate Game (requires ≥60 min) -->
+        <form action="/rate/{{ g._id }}" method="POST" style="display:inline;">
+          <input type="number" name="rating" min="1" max="5" required placeholder="1–5">
+          <button type="submit">Rate</button>
+        </form>
+
+        <!-- Comment on Game (requires ≥60 min) -->
+        <form action="/comment/{{ g._id }}" method="POST" style="display:inline;">
+          <input type="text" name="comment" required placeholder="Comment">
+          <button type="submit">Comment</button>
+        </form>
+      </li>
+      <br>
     {% endfor %}
   </ul>
 
-  <h2>Puanlarım</h2>
-  <ul>
-    {% for r in user.ratings %}
-      <li><strong>{{ r.game }}:</strong> {{ r.value }}/5</li>
-    {% else %}
-      <li>Henüz puan vermediniz.</li>
-    {% endfor %}
-  </ul>
+  <p><a href="/games">🔍 Look Games</a></p>
 </body>
 </html>
