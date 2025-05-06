@@ -6,25 +6,80 @@
 </head>
 <body>
   <h1>Tüm Oyunlar</h1>
-  <a href="{{ url_for('home') }}">Ana Sayfa</a>
+  <nav>
+    <a href="{{ url_for('home') }}">Ana Sayfa</a> |
+    <a href="{{ url_for('user_home') }}">Profilim</a>
+  </nav>
+  <hr>
 
+  <!-- Yeni Oyun Ekle -->
   <h2>Yeni Oyun Ekle</h2>
   <form method="POST" action="{{ url_for('add_game') }}">
-    <input type="text" name="name" placeholder="Oyun Adı" required>
-    <input type="text" name="genres" placeholder="Türler (virgülle ayırın)" required>
-    <input type="text" name="photo" placeholder="Fotoğraf URL (opsiyonel)">
+    <input type="text" name="name" placeholder="Oyun Adı" required><br>
+    <input type="text" name="genres" placeholder="Türler (virgülle ayırın)" required><br>
+    <input type="text" name="photo" placeholder="Fotoğraf URL"><br>
+    <input type="text" name="optional1" placeholder="Opsiyonel Alan 1"><br>
+    <input type="text" name="optional2" placeholder="Opsiyonel Alan 2"><br>
     <button type="submit">Ekle</button>
   </form>
 
+  <hr>
+
+  <!-- Oyun Listesi -->
   <h2>Mevcut Oyunlar</h2>
   <ul>
-    {% for game in games %}
+    {% for item in games_with_comments %}
+      {% set g = item.game %}
       <li>
-        <a href="{{ url_for('game_detail', game_name=game.name) }}">{{ game.name }}</a>
-        <form style="display:inline" method="POST" action="{{ url_for('remove_game', game_name=game.name) }}">
-          <button type="submit" onclick="return confirm('Silinsin mi?')">Sil</button>
+        <h3>{{ g.name }}</h3>
+
+        <!-- Fotoğraf -->
+        {% if g.photo %}
+          <img src="{{ g.photo }}" alt="{{ g.name }}" width="200"><br>
+        {% endif %}
+
+        <!-- Türler -->
+        <p><strong>Türler:</strong> {{ g.genres | join(', ') }}</p>
+
+        <!-- Toplam Oynama Süresi -->
+        <p><strong>Play Time:</strong> {{ g.play_time }} dakika</p>
+
+        <!-- Ağırlıklı Puan -->
+        <p><strong>Puan:</strong> {{ '%.2f' % g.rating }}</p>
+
+        <!-- Opsiyonel Alanlar -->
+        {% if g.optional %}
+          <p><strong>Ek Bilgiler:</strong></p>
+          <ul>
+            {% for key, val in g.optional.items() %}
+              <li><strong>{{ key }}:</strong> {{ val }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <!-- Yorumlar (oynama süresine göre sıralı) -->
+        <h4>Tüm Yorumlar:</h4>
+        <ul>
+          {% for c in item.comments %}
+            <li>
+              <strong>{{ c.user_name }}:</strong> {{ c.comment }}
+              ({{ c.play_time }} dakika)
+            </li>
+          {% endfor %}
+          {% if item.comments|length == 0 %}
+            <li><em>Henüz yorum yok.</em></li>
+          {% endif %}
+        </ul>
+
+        <!-- Sil & Detay -->
+        <form style="display:inline" method="POST"
+              action="{{ url_for('remove_game', game_name=g.name) }}"
+              onsubmit="return confirm('Silinsin mi?')">
+          <button type="submit">Sil</button>
         </form>
+        <a href="{{ url_for('game_detail', game_name=g.name) }}">Detay</a>
       </li>
+      <hr>
     {% else %}
       <li>Henüz oyun eklenmemiş.</li>
     {% endfor %}
