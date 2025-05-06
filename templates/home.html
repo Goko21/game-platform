@@ -17,16 +17,13 @@
   </nav>
   <hr>
 
-  <!-- Flash Messages -->
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>
-        {% for msg in messages %}
-          <li>{{ msg }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+  
+  <!-- Flash (session message) -->
+{% if session.get('message') %}
+<p><strong>{{ session.get('message') }}</strong></p>
+{% set _ = session.pop('message') %}
+{% endif %}
+
 
   <!-- Add User -->
   <h2>Add User</h2>
