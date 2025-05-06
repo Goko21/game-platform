@@ -5,6 +5,15 @@
     <title>Ana Sayfa</title>
 </head>
 <body>
+    <!-- Navigasyon Menüsü -->
+    <nav>
+        <a href="{{ url_for('home') }}">🏠 Ana Sayfa</a> |
+        <a href="{{ url_for('games') }}">🎮 Tüm Oyunlar</a> |
+        <a href="{{ url_for('user_home') }}">👤 Profilim</a> |
+        <a href="{{ url_for('logout') }}">🚪 Çıkış Yap</a>
+    </nav>
+    <hr>
+
     <h1>Oyun Platformu</h1>
 
     {% if message %}
@@ -58,7 +67,5 @@
         <input type="text" name="username" placeholder="Kullanıcı Adı" required>
         <button type="submit">Ekle</button>
     </form>
-
-    <p><a href="{{ url_for('logout') }}">Çıkış Yap</a></p>
 </body>
 </html>
