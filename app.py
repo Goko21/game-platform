@@ -130,7 +130,14 @@ def user_home():
 @app.route('/games')
 def games():
     all_games = games_col.find().sort("name", 1)
-    return render_template('games.html', games=all_games)
+    games_with_comments = []
+    for game in all_games:
+        comments = game.get('comments', [])
+        games_with_comments.append({
+            'game': game,
+            'comments': comments
+        })
+    return render_template('games.html', games_with_comments=games_with_comments)
 
 
 @app.route('/game/<game_name>')
