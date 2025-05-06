@@ -11,7 +11,7 @@
   <nav>
     <a href="/">🏠 Home</a> |
     <a href="/games">🎮 Games Page</a> |
-    {% if session.get('user_id') %}
+    {% if session.get('username') %}
       <a href="/user_home">👤 Your User Page</a>
     {% endif %}
   </nav>
@@ -52,10 +52,10 @@
     {% for user in users %}
       <li>
         {{ user.name }}
-        <form action="/remove_user/{{ user._id }}" method="POST" style="display:inline;">
+        <form action="/remove_user/{{ user.name }}" method="POST" style="display:inline;">
           <button type="submit">Remove User</button>
         </form>
-        <form action="/login_user/{{ user._id }}" method="GET" style="display:inline;">
+        <form action="/login_user/{{ user.name }}" method="GET" style="display:inline;">
           <button type="submit">Login as {{ user.name }}</button>
         </form>
       </li>
@@ -68,15 +68,15 @@
     {% for game in games %}
       <li>
         {{ game.name }}
-        <form action="/remove_game/{{ game._id }}" method="POST" style="display:inline;">
+        <form action="/remove_game/{{ game.name }}" method="POST" style="display:inline;">
           <button type="submit">Remove Game</button>
         </form>
         {% if game.rating_enabled %}
-          <form action="/disable_game/{{ game._id }}" method="POST" style="display:inline;">
+          <form action="/disable_game/{{ game.name }}" method="POST" style="display:inline;">
             <button type="submit">Disable Rating/Comment</button>
           </form>
         {% else %}
-          <form action="/enable_game/{{ game._id }}" method="POST" style="display:inline;">
+          <form action="/enable_game/{{ game.name }}" method="POST" style="display:inline;">
             <button type="submit">Enable Rating/Comment</button>
           </form>
         {% endif %}

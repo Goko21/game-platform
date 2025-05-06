@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session,flash
 from pymongo import MongoClient
 import os
 
@@ -97,6 +97,25 @@ def register():
         return "Kullanıcı zaten var", 400
     return render_template('register.html')
 
+@app.route('/disable_game/<game_name>', methods=['POST'])
+def disable_game(game_name):
+    games_col.update_one({'name': game_name}, {'$set': {'rating_enabled': False}})
+    flash(f"Rating/comment disabled for '{game_name}'.")
+    return redirect(url_for('home'))
+
+
+@app.route('/enable_game/<game_name>', methods=['POST'])
+def enable_game(game_name):
+    games_col.update_one({'name': game_name}, {'$set': {'rating_enabled': True}})
+    flash(f"Rating/comment enabled for '{game_name}'.")
+    return redirect(url_for('home'))
+
+
+@app.route('/login_user/<username>')
+def login_user(username):
+    session['username'] = username
+    flash(f"Logged in as {username}")
+    return redirect(url_for('user_home'))
 
 @app.route('/user_home')
 def user_home():
@@ -248,35 +267,44 @@ def add_game():
 
 @app.route('/remove_game/<game_name>', methods=['POST'])
 def remove_game(game_name):
-    if 'username' not in session:
-        return "Giriş yapmadınız", 401
-    games_col.delete_one({"name": game_name})
+    # delete game document
+    games_col.delete_one({'name': game_name})
+    # remove references from all users
     users_col.update_many({}, {
-        '$pull': {
-            'comments': {'game': game_name},
-            'ratings': {'game': game_name}
+        '$unset': {
+            f'play_times.{game_name}': "",
+            f'ratings': "",
+            f'comments': ""
         }
     })
-    return redirect(url_for('games'))
+    # also pull embedded arrays of ratings/comments
+    users_col.update_many({}, {
+        '$pull': {
+            'ratings': {'game': game_name},
+            'comments': {'game': game_name}
+        }
+    })
+    flash(f"Game '{game_name}' removed.")
+    return redirect(url_for('home'))
 
 
 @app.route('/remove_user/<username>', methods=['POST'])
 def remove_user(username):
-    if 'username' not in session:
-        return "Giriş yapmadınız", 401
-    user = users_col.find_one({"name": username})
+    # find and delete by name
+    user = users_col.find_one({'name': username})
     if user:
-        for c in user.get('comments', []):
-            games_col.update_one(
-                {"name": c['game']},
-                {'$pull': {'comments': {'user': username}}}
-            )
-        for r in user.get('ratings', []):
-            games_col.update_one(
-                {"name": r['game']},
-                {'$pull': {'ratings': {'user': username}}}
-            )
-        users_col.delete_one({"name": username})
+        # roll back plays
+        for gid, mins in user.get('play_times', {}).items():
+            games_col.update_one({'name': gid}, {'$inc': {'play_time': -mins}})
+        # pull ratings and comments
+        games_col.update_many({}, {
+            '$pull': {
+                'ratings': {'user': username},
+                'comments': {'user': username}
+            }
+        })
+        users_col.delete_one({'name': username})
+        flash(f"User '{username}' removed.")
     return redirect(url_for('home'))
 
 
