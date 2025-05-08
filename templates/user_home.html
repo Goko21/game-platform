@@ -16,7 +16,7 @@
   <!-- User Info -->
   <h1>{{ user.name }}'s Dashboard</h1>
   <p><strong>Total Play Time:</strong> {{ user.total_play_time }} minutes</p>
-  <p><strong>Average of Ratings:</strong> {{ '%.2f' % user.avg_rating }}</p>
+  <p><strong>Average of Ratings:</strong> {{ '%.2f' % avg_rating }}</p>
   <p><strong>Most Played Game:</strong>
     {% for g in games %}
       {% if g._id|string == user.most_played_game %}
