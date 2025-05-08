@@ -225,22 +225,45 @@ def rate(game_name):
 def comment(game_name):
     if 'username' not in session:
         return "Giriş yapmadınız", 401
+    
     username = session['username']
     user = users_col.find_one({"name": username})
-    play_time = user.get('play_times', {}).get(game_name, 0)
-    if play_time < 60:
-        return "Oyuna yorum yapmak için en az 60 dakika oynamalısınız", 403
-
+    
+    # Formdan gelen verileri alıyoruz
     comment_text = request.form['comment']
+    play_time = int(request.form['play_time'])
+    rating = int(request.form['rating'])
+    
+    # Oynanma süresini kullanıcıya ve oyuna ekliyoruz
+    current_time = user.get('play_times', {}).get(game_name, 0)
     users_col.update_one(
         {"name": username},
-        {'$push': {'comments': {'game': game_name, 'comment': comment_text, 'play_time': play_time}}}
+        {
+            '$inc': {'total_play_time': play_time},
+            '$set': {f'play_times.{game_name}': current_time + play_time}
+        }
     )
+    games_col.update_one({"name": game_name}, {'$inc': {'play_time': play_time}})
+
+    # Yorum ve puanı kullanıcıya ve oyuna ekliyoruz
+    users_col.update_one(
+        {"name": username},
+        {'$push': {
+            'comments': {'game': game_name, 'comment': comment_text, 'play_time': play_time},
+            'ratings': {'game': game_name, 'value': rating, 'play_time': play_time}
+        }}
+    )
+
     games_col.update_one(
         {"name": game_name},
-        {'$push': {'comments': {'user': username, 'comment': comment_text, 'play_time': play_time}}}
+        {'$push': {
+            'comments': {'user': username, 'comment': comment_text, 'play_time': play_time},
+            'ratings': {'user': username, 'value': rating, 'play_time': play_time}
+        }}
     )
+
     return redirect(url_for('game_detail', game_name=game_name))
+
 
 
 @app.route('/add_user', methods=['POST'])
