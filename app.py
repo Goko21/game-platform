@@ -120,7 +120,7 @@ def user_home():
         return redirect(url_for('home'))
 
     ratings = user.get('ratings', [])
-    avg_rating = sum(r['value'] for r in ratings) / len(ratings) if ratings else None
+    avg_rating = sum(r['value'] for r in ratings) / len(ratings) if ratings else 0
     play_times = user.get('play_times', {})
     most_played = max(play_times, key=play_times.get) if play_times else None
 
