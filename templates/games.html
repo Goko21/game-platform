@@ -12,7 +12,6 @@
   </nav>
   <hr>
 
-  <!-- Oyun Listesi -->
   <h2>Mevcut Oyunlar</h2>
   <ul>
     {% for item in games_with_comments %}
@@ -47,12 +46,23 @@
           {% endif %}
         </ul>
 
+        <!-- Yorum Yapma Formu -->
+        {% if session.get('username') %}
+          <h4>Yorum Yap:</h4>
+          <form action="{{ url_for('comment', game_name=g.name) }}" method="POST">
+              <label>Yorumunuz:</label><br>
+              <input type="text" name="comment" required><br>
+              <button type="submit">Yorum Yap</button>
+          </form>
+        {% else %}
+          <p><em>Yorum yapmak için giriş yapmalısınız.</em></p>
+        {% endif %}
+        
         <form style="display:inline" method="POST"
               action="{{ url_for('remove_game', game_name=g.name) }}"
               onsubmit="return confirm('Silinsin mi?')">
           <button type="submit">Sil</button>
         </form>
-        
         
         <a href="{{ url_for('game_detail', game_name=g.name | urlencode) }}">Detay</a>
       </li>
