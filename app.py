@@ -143,9 +143,9 @@ def games():
                 weighted = sum(r['play_time'] * r['value'] for r in ratings)
                 average_rating = round(weighted / total_weight, 2)
             else:
-                average_rating = None
+                average_rating = 0
         else:
-            average_rating = None
+            average_rating = 0
 
         games_with_comments.append({
             'game': game,
