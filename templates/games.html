@@ -46,17 +46,26 @@
           {% endif %}
         </ul>
 
-        <!-- Yorum Yapma Formu -->
-        {% if session.get('username') %}
-          <h4>Yorum Yap:</h4>
-          <form action="{{ url_for('comment', game_name=g.name) }}" method="POST">
-              <label>Yorumunuz:</label><br>
-              <input type="text" name="comment" required><br>
-              <button type="submit">Yorum Yap</button>
-          </form>
-        {% else %}
-          <p><em>Yorum yapmak için giriş yapmalısınız.</em></p>
-        {% endif %}
+        
+       <!-- Yorum, Puan ve Oynanan Dakika Girişi -->
+{% if session.get('username') %}
+  <h4>Yorum Yap:</h4>
+  <form action="{{ url_for('comment', game_name=g.name) }}" method="POST">
+      <label>Yorumunuz:</label><br>
+      <input type="text" name="comment" required><br><br>
+
+      <label>Kaç dakika oynadınız?</label><br>
+      <input type="number" name="play_time" min="1" required><br><br>
+
+      <label>Puanınız (1-5):</label><br>
+      <input type="number" name="rating" min="1" max="5" required><br><br>
+
+      <button type="submit">Gönder</button>
+  </form>
+{% else %}
+  <p><em>Yorum yapmak için giriş yapmalısınız.</em></p>
+{% endif %}
+
         
         <form style="display:inline" method="POST"
               action="{{ url_for('remove_game', game_name=g.name) }}"
