@@ -52,7 +52,9 @@
               onsubmit="return confirm('Silinsin mi?')">
           <button type="submit">Sil</button>
         </form>
-        <a href="{{ url_for('game_detail', game_name=g.name) }}">Detay</a>
+        
+        
+        <a href="{{ url_for('game_detail', game_name=g.name | urlencode) }}">Detay</a>
       </li>
       <hr>
     {% else %}
