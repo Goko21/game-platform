@@ -169,9 +169,9 @@ def game_detail(game_name):
     if game.get('ratings'):
         weighted = sum(r['play_time'] * r['value'] for r in game['ratings'])
         total_w = sum(r['play_time'] for r in game['ratings'])
-        avg = weighted / total_w if total_w > 0 else None
+        avg = weighted / total_w if total_w > 0 else 0
     else:
-        avg = None
+        avg = 0
 
     username = session.get('username')
     user = users_col.find_one({"name": username}) if username else None
