@@ -161,6 +161,7 @@ def games():
 @app.route('/game/<game_name>')
 def game_detail(game_name):
     print(game_name)
+    game_name = game_name.replace("%20", " ")
     game = games_col.find_one({"name": game_name})
     if not game:
         return "Oyun bulunamadı", 404
