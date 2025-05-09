@@ -25,22 +25,22 @@
     {% endfor %}
   </p>
 
-  <!-- Comments -->
-  <h2>Your Comments (sorted by your play time)</h2>
-  <ul>
-    {% for game_id, comment, play_time in sorted_comments %}
-      <li>
-        {% for g in games %}
-          {% if g._id|string == game_id %}
-            <strong>{{ g.name }}:</strong> {{ comment }} ({{ play_time }} min)
-          {% endif %}
-        {% endfor %}
-      </li>
+  <h2>Yorumlarım:</h2>
+{% if comments %}
+    <ul>
+    {% for comment in comments %}
+        <li>
+            <strong>Oyun:</strong> {{ comment.game }} <br>
+            <strong>Yorum:</strong> {{ comment.comment }} <br>
+            <strong>Oynama Süresi:</strong> {{ comment.play_time }} dakika
+        </li>
+        <hr>
     {% endfor %}
-    {% if sorted_comments|length == 0 %}
-      <li><em>No comments yet. Play and comment on games!</em></li>
-    {% endif %}
-  </ul>
+    </ul>
+{% else %}
+    <p><em>Henüz bir yorum yapılmamış.</em></p>
+{% endif %}
+
 
   <!-- Actions -->
   <h2>Actions</h2>
