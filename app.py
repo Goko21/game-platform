@@ -122,7 +122,8 @@ def user_home():
     ratings = user.get('ratings', [])
     avg_rating = sum(r['value'] for r in ratings) / len(ratings) if ratings else 0
     play_times = user.get('play_times', {})
-    most_played = max(play_times, key=play_times.get) if play_times else None
+    most_played = max(play_times, key=play_times.get) if play_times else 0
+    comments = user.get('comments', [])
 
     return render_template('user_home.html', user=user, most_played=most_played, avg_rating=avg_rating)
 
